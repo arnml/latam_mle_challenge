@@ -2,19 +2,26 @@ from datetime import datetime
 import joblib
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 class DelayModel:
 
     def __init__(
         self
     ):
-        checkpoint = joblib.load("./challenge/delay.model")
+        checkpoint = joblib.load("./challenge/delay.joblib")
+        # checkpoint = joblib.load("delay.joblib")
         self.__model = checkpoint["model"]
         self.__sklearn_version = checkpoint["sklearn_version"]
         self.__selected_features = checkpoint["selected_features"]
         self.__top_10_features = checkpoint["top_10_features"]
+        self.threshold_in_minutes = 15
 
     # Getter and Setter for model
+    @property
+    def _model(self):
+        return self.__model
+    
     @property
     def model(self):
         return self.__model
@@ -49,6 +56,19 @@ class DelayModel:
     @top_10_features.setter
     def top_10_features(self, top_10_features):
         self.__top_10_features = top_10_features
+    
+    def __get_min_diff(self, data: pd.Series) -> float:
+        fecha_o = datetime.strptime(data["Fecha-O"], "%Y-%m-%d %H:%M:%S")
+        fecha_i = datetime.strptime(data["Fecha-I"], "%Y-%m-%d %H:%M:%S")
+        min_diff = ((fecha_o - fecha_i).total_seconds()) / 60
+        return min_diff
+
+    def get_target(self, data: pd.DataFrame, target_column: str) -> pd.DataFrame:
+        data["min_diff"] = data.apply(self.__get_min_diff, axis=1)
+        data[target_column] = np.where(
+            data["min_diff"] > self.threshold_in_minutes, 1, 0
+        )
+        return data[[target_column]]
 
     def preprocess(
         self,
@@ -74,11 +94,12 @@ class DelayModel:
             pd.get_dummies(filtered_data['MES'], prefix = 'MES')], 
             axis = 1
         )
+        features = features[self.top_10_features]
 
         if not target_column:
             return features
 
-        return features, data[target_column]
+        return features, self.get_target(data=data, target_column=target_column)
 
     def fit(
         self,
@@ -92,8 +113,11 @@ class DelayModel:
             features (pd.DataFrame): preprocessed data.
             target (pd.DataFrame): target.
         """
-        features, target = self.preprocess(data = features, target_column=target)
-        self.model.fit(features, target)
+        x_train, _, y_train, _ = train_test_split(
+            features, target, test_size=0.33, random_state=42
+        )
+        # features, target = self.preprocess(data = features, target_column=target)
+        self.model.fit(x_train, y_train)
         return
 
     def predict(
@@ -109,4 +133,4 @@ class DelayModel:
         Returns:
             (List[int]): predicted targets.
         """
-        return self.model.predict(features)
+        return self.model.predict(features).tolist()

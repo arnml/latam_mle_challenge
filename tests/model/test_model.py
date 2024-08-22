@@ -24,13 +24,29 @@ class TestModel(unittest.TestCase):
         "delay"
     ]
 
+    DTYPE_SPEC = {
+        'Fecha-I': str,
+        'Vlo-I': str,
+        'Ori-I': str,
+        'Des-I': str,
+        'Emp-I': str,
+        'Fecha-O': str,
+        'Vlo-O': str,
+        'Ori-O': str,
+        'Des-O': str,
+        'Emp-O': str,
+    }
+
 
     def setUp(self) -> None:
         super().setUp()
         self.model = DelayModel()
-        self.data = pd.read_csv(filepath_or_buffer="../data/data.csv")
+        self.data = pd.read_csv(
+            filepath_or_buffer="./data/data.csv",
+            dtype=self.DTYPE_SPEC,
+            low_memory=False
+        )
         
-
     def test_model_preprocess_for_training(
         self
     ):
@@ -72,7 +88,7 @@ class TestModel(unittest.TestCase):
 
         self.model.fit(
             features=features,
-            target=target
+            target=target.values.ravel()
         )
 
         predicted_target = self.model._model.predict(
