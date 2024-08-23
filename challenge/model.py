@@ -94,7 +94,8 @@ class DelayModel:
             pd.get_dummies(filtered_data['MES'], prefix = 'MES')], 
             axis = 1
         )
-        features = features[self.top_10_features]
+        features = features.reindex(columns=self.top_10_features, fill_value=0)
+
 
         if not target_column:
             return features
