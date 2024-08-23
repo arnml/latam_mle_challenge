@@ -4,3 +4,7 @@ fastapi[all]
 joblib
 scikit-learn
 pytest
+pytest-cov
+coverage
+mockito
+locust
