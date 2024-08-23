@@ -6,6 +6,27 @@ on:
       - main
 
 jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        project_id: ${{ secrets.GCP_PROJECT }}
+
+    - name: Authenticate Docker with GCR
+      run: |
+        echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | docker login -u _json_key --password-stdin https://gcr.io
+
+    - name: Build Docker image
+      run: |
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.CLOUD_RUN_SERVICE_NAME }}:latest .
+
   deploy-test:
     runs-on: ubuntu-latest
 
