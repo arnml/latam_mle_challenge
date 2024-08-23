@@ -10,14 +10,12 @@ class DelayModel:
         self
     ):
         checkpoint = joblib.load("./challenge/delay.joblib")
-        # checkpoint = joblib.load("delay.joblib")
         self.__model = checkpoint["model"]
         self.__sklearn_version = checkpoint["sklearn_version"]
         self.__selected_features = checkpoint["selected_features"]
         self.__top_10_features = checkpoint["top_10_features"]
         self.threshold_in_minutes = 15
 
-    # Getter and Setter for model
     @property
     def _model(self):
         return self.__model
@@ -30,7 +28,6 @@ class DelayModel:
     def model(self, model):
         self.__model = model
 
-    # Getter and Setter for sklearn_version
     @property
     def sklearn_version(self):
         return self.__sklearn_version
@@ -39,7 +36,6 @@ class DelayModel:
     def sklearn_version(self, sklearn_version):
         self.__sklearn_version = sklearn_version
 
-    # Getter and Setter for selected_features
     @property
     def selected_features(self):
         return self.__selected_features
@@ -48,7 +44,6 @@ class DelayModel:
     def selected_features(self, selected_features):
         self.__selected_features = selected_features
 
-    # Getter and Setter for top_10_features
     @property
     def top_10_features(self):
         return self.__top_10_features
