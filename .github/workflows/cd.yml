@@ -16,7 +16,8 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        project_id: "latam-challenge-arnm"
+        workload_identity_provider: ${{ secrets.PROVIDER }}
 
     # - name: Authenticate Docker with GCR
     #   run: |
