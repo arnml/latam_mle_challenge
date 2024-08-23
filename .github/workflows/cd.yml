@@ -1,17 +1,17 @@
 name: Continuous Deployment
 
 on:
-  pull-request:
+  push:
     branches:
       - main
 
 jobs:
-  deploy:
+  deploy-test:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -23,24 +23,24 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: ${{ secrets.GCP_PROJECT }}
-        service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-        export_default_credentials: true
+    # - name: Set up Google Cloud SDK
+    #   uses: google-github-actions/setup-gcloud@v1
+    #   with:
+    #     project_id: ${{ secrets.GCP_PROJECT }}
+    #     service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+    #     export_default_credentials: true
 
-    - name: Build and push Docker image
-      run: |
-        gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT }}/fastapi-app
+    # - name: Build and push Docker image
+    #   run: |
+    #     gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT }}/fastapi-app
 
-    - name: Deploy to Cloud Run
-      run: |
-        gcloud run deploy fastapi-app \
-          --image gcr.io/${{ secrets.GCP_PROJECT }}/fastapi-app \
-          --platform managed \
-          --allow-unauthenticated \
-          --region ${{ secrets.GCP_REGION }}
+    # - name: Deploy to Cloud Run
+    #   run: |
+    #     gcloud run deploy fastapi-app \
+    #       --image gcr.io/${{ secrets.GCP_PROJECT }}/fastapi-app \
+    #       --platform managed \
+    #       --allow-unauthenticated \
+    #       --region ${{ secrets.GCP_REGION }}
 
     - name: Run stress API tests
       run: make stress-test

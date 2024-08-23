@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,8 +28,3 @@ jobs:
 
     - name: Run API tests
       run: make api-test
-
-    # - name: Lint with flake8
-    #   run: |
-    #     pip install flake8
-    #     flake8 .
