@@ -19,8 +19,8 @@ venv:			## Create a virtual environment
 
 .PHONY: install
 install:		## Install dependencies
-	pip install -r requirements-dev.txt
-	pip install -r requirements-test.txt
+	# pip install -r requirements-dev.txt
+	# pip install -r requirements-test.txt
 	pip install -r requirements.txt
 
 STRESS_URL = https://fastapi-app-6fqard4dvq-rj.a.run.app
