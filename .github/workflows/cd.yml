@@ -40,7 +40,6 @@ jobs:
       uses: 'google-github-actions/auth@v2'
       with:
         token_format: access_token
-        credentials_json: ${{secrets.GCP_CREDENTIAL_JSON}}
         service_account: ${{secrets.GCP_SERVICE_ACCOUNT}}
         workload_identity_provider: ${{secrets.GCP_WORKLOAD_IDENTITY_PROVIDER}}
 
