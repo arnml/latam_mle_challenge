@@ -3,7 +3,7 @@ name: Continuous Deployment
 on:
   push:
     branches:
-      - main
+      - CI/CD-experimentation
 jobs:  
   deploy-test:
     runs-on: ubuntu-latest      
@@ -23,3 +23,18 @@ jobs:
 
     - name: Run stress API tests
       run: make stress-test
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        project_id: ${{secrets.PROJECT_ID}}
+        workload_identity_provider: ${{secrets.WORKLOAD_PROVIDER}}
